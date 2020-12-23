@@ -1,3 +1,11 @@
+# Instructions to Run
+
+Open main project folder and run the Frontend with `ng serve`
+Open another terminal and go to folder /backend inside of main project's folder and run `node server.js` to start the Express App
+that handles HTTP Requests
+You will also have to have a MongoDB instance running on port 27017 (Most probably default Mongo port)
+Happy coding! :) 
+
 # ForumApp
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 11.0.3.
