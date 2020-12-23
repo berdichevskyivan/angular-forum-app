@@ -1,0 +1,23 @@
+<div class="forum-login-container">
+    <div *ngIf="isUserLoggedIn; else elseBlock" class="logoutContainer">
+        <h1 style="color:white">Welcome, {{ username }}!</h1>
+    
+        <button mat-raised-button color="primary" (click)="logout()" >Logout</button>
+    </div>
+    <ng-template #elseBlock >
+        <mat-form-field appearance="outline">
+            <mat-label>Username</mat-label>
+            <input matInput placeholder="Your username" [(ngModel)]="username" >
+        </mat-form-field>
+    
+        <mat-form-field appearance="outline" >
+            <mat-label>Password</mat-label>
+            <input matInput placeholder="Your password" type="password" [(ngModel)]="password" >
+        </mat-form-field>
+        
+        <div class="buttonContainer">
+            <button mat-raised-button color="primary" (click)="login()" style="margin-bottom:1rem">Login</button>
+            <button mat-raised-button color="primary" (click)="register()" >Register</button>
+        </div>
+    </ng-template>
+</div>

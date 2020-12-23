@@ -1,0 +1,29 @@
+.forum-login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-flow: column;
+    background-color: black;
+    padding: 2rem;
+    position: fixed;
+    left: 10px;
+    top: 10px;
+}
+
+.mat-form-field input {
+    color:#e700e6;
+}
+
+.logoutContainer {
+    display: flex;
+    flex-flow: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.buttonContainer { 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-flow: column;
+}

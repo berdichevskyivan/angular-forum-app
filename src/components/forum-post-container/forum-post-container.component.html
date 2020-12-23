@@ -1,0 +1,24 @@
+<div class="postsContainer">
+    <div *ngIf="posts?.length === 0; else elseBlock" class="noPostsContainer">
+        <h1>There are no Posts currently. Start by creating one!</h1>
+    </div>
+    <ng-template #elseBlock >
+        <div *ngFor="let post of posts" class="post" >
+            <div [innerHTML]="post.postContent" class="postContent"></div>
+            <div><h1>Made by {{ post.postUser }}</h1></div>
+            <!-- Here I will post the comments -->
+            <!-- Here will go the post comment creator -->
+            <div class="postCommentCreatorContainer">
+                <textarea rows="8" cols="50" [(ngModel)]="post.postCommentValue"></textarea>
+                <button mat-raised-button color="primary" (click)="postComment(post._id,post.postCommentValue)" style="margin-top:1rem">Post Comment</button>
+            </div>
+            <div class="postCommentSection" id="postCommentSection">
+                <div *ngFor="let comment of post.postComments" class="comment">
+                    <h1>{{ comment.postCommentContent }}</h1>
+                    <h3>by {{ comment.postCommentAuthor }}</h3>
+                </div>
+            </div>
+        </div>
+    </ng-template>
+
+</div>
