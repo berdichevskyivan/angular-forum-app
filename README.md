@@ -1,9 +1,16 @@
 # Instructions to Run
 
+<<<<<<< HEAD
 Open main project folder and run the Frontend with `ng serve`
 
 Open another terminal and go to folder /backend inside of main project's folder and run `node server.js` to start the Express App
 that handles HTTP Requests
+=======
+Open main project folder and run the Frontend with `ng serve`.
+
+Open another terminal and go to folder /backend inside of main project's folder and run `node server.js` to start the Express App
+that handles HTTP Requests.
+>>>>>>> 64fc5a6c13466c1f31266659e6a96faf7acfa90e
 
 You will also have to have a MongoDB instance running on port 27017 (Most probably default Mongo port)
 Happy coding! :) 
