@@ -1,10 +1,17 @@
 # Instructions to Run
 
 Open main project folder and run the Frontend with `ng serve`
+
 Open another terminal and go to folder /backend inside of main project's folder and run `node server.js` to start the Express App
 that handles HTTP Requests
+
 You will also have to have a MongoDB instance running on port 27017 (Most probably default Mongo port)
 Happy coding! :) 
+
+# Setting up a Redis Server
+
+You have to set up a Redis Server , you can download the windows MSI from here (https://github.com/microsoftarchive/redis/releases/tag/win-3.2.100) , otherwise
+it's pretty easy to be installed on Linux. Listen on the appropiate port (6379 I believe) and voila!
 
 # ForumApp
 

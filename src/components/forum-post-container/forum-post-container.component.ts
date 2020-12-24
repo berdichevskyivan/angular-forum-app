@@ -39,14 +39,6 @@ export class ForumPostContainer{
 
         console.log(this.posts);
 
-        let username = localStorage.getItem('username');
-        if(!username){
-            let snackBarRef = this._snackBar.open('You must login first','',{
-                duration:2000,
-            });
-            return ;
-        }
-
         if(!commentValue){
             let snackBarRef = this._snackBar.open('You must enter some words in the comment section to post','',{
                 duration:2000,
@@ -56,9 +48,14 @@ export class ForumPostContainer{
 
         console.log('calling postComment()');
         this.httpService.saveComment({postId:id,postComment:{
-            postCommentAuthor:`${username}`,
             postCommentContent:`${commentValue}`
         }}).subscribe((data:any)=>{
+            if(data.type==='error'){
+                let snackBarRef = this._snackBar.open(data.message,'',{
+                    duration:2000,
+                });
+                return ;
+            }
             console.log(data);
             this.getPosts();
         })

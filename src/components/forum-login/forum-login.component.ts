@@ -11,26 +11,40 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 
 export class ForumLogin{
 
-    public username: string;
-    password: string;
-    isUserLoggedIn: boolean;
+    public username: string = '';
+    password: string = '';
+    isUserLoggedIn: boolean = false;
 
-    constructor(private httpService: HttpService, private _snackBar: MatSnackBar){ 
-        this.username = '';
-        this.password = '';
-        this.isUserLoggedIn = false;
-    }
+    constructor(private httpService: HttpService, private _snackBar: MatSnackBar){  }
 
     openSnackBar(message:string, action:string){
         this._snackBar.open(message,action,{duration:2000});
     }
 
     ngOnInit(){
-        if(localStorage.getItem('username')){
-            // this means user is logged in
-            this.username = `${localStorage.getItem('username')}`;
-            this.isUserLoggedIn = true;
-        }
+        // now we validate by asking the server . . . 
+        console.log('ngOnInit() -> Validating session...');
+        this.httpService.validateSession().subscribe((data:any)=>{
+            console.log(data);
+            if(data.type==='success'){
+                // means user is logged in
+                // retrieve username from response
+                this.username = data.username;
+                this.isUserLoggedIn = true;
+            }else{
+                // means user is NOT logged in
+                // Cleaning variables
+                this.username = '';
+                this.password = '';
+                this.isUserLoggedIn = false;
+            }
+        });
+
+        // if(localStorage.getItem('username')){
+        //     // this means user is logged in
+        //     this.username = `${localStorage.getItem('username')}`;
+        //     this.isUserLoggedIn = true;
+        // }
     }
 
     login(){
@@ -39,8 +53,7 @@ export class ForumLogin{
             if(data.type==='success'){
                 // means it was logged in
                 this.isUserLoggedIn = true;
-                // we will also store this state in the localStorage
-                localStorage.setItem('username',`${this.username}`);
+                // now we're storing state in session object instead of localStorage
             }else{
                 // means it was not found
                 let snackBarRef = this._snackBar.open(data.message,'',{
@@ -60,8 +73,8 @@ export class ForumLogin{
             if(data.type==='success'){
                 // means it was registered and can be logged in
                 this.isUserLoggedIn = true;
-                // we will also store this state in the localStorage
-                localStorage.setItem('username',`${this.username}`);
+                // we retrieve username from response
+                this.username = data.username;
                 let snackBarRef = this._snackBar.open(data.message,'',{
                     duration:2000,
                 });
@@ -76,7 +89,9 @@ export class ForumLogin{
 
     logout(){
         this.isUserLoggedIn = false;
-        localStorage.clear();
+        this.httpService.logout().subscribe((data:any)=>{
+            console.log('Logged out in server...');
+        });
     }
 
 };

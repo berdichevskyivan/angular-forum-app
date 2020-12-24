@@ -11,24 +11,35 @@ const PostModel = require('./models/PostModel');
     })
 })();
 
-// this will save a user
-// const userInstance = new UserModel();
-// userInstance.username = 'akitsushima';
-// userInstance.password = '12345';
-// userInstance.save(function(err){
-//     if (err) return console.log(err);
-// })
-
 const express = require('express');
+const session = require('express-session');
+
+const redis = require('redis');
+const redisStore = require('connect-redis')(session);
+
+const client = redis.createClient();
+
 const { update } = require('./models/UserModel');
 const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded());
 
+// we initialize the session and we provide a secret
+app.use(session({
+    secret:'ssshhhh',
+    // create new redis store
+    store: new redisStore({host:'localhost',post:6379,client:client,ttl:260}),
+    saveUninitialized: false,
+    resave: true,
+    rolling: true,
+    cookie: { expires: 20 * 1000}, // 8 hours
+    maxAge: 8*60*60*1000,
+}));
+
 app.use(function(req,res,next){
     // Website you wish to allow to connect
-    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:4200');
 
     // Request methods you wish to allow
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
@@ -44,18 +55,22 @@ app.use(function(req,res,next){
     next();
 })
 
-app.get('/',function(req,res){
-    console.log('im being called');
-    res.send({
-        msg:'hello im a message',
-    })
-})
-
-app.get('/api/test',function(req,res){
-    console.log('/api/test is being called');
-    res.send({
-        msg:'a different message this time'
-    })
+app.get('/api/validateSession',function(req,res){
+    let sess = req.session;
+    console.log('/api/validateSession is being called');
+    if(sess.username){
+        // means session is valid
+        res.send({
+            type:'success',
+            message:'Session is valid',
+            username: sess.username,
+        })
+    }else{
+        res.send({
+            type:'error',
+            message:'Session is invalid',
+        })
+    }
 })
 
 app.post('/api/login',function(req,res){
@@ -70,17 +85,29 @@ app.post('/api/login',function(req,res){
                 message:'The user was not found',
                 type:'error',
             }
+            console.log(response);
             res.send(response);
         }else{
             // it did find the user!
+            // by assigning a property to the session, Session is initiated and SessionID is fixed until destroyed
+            req.session.username = req.body.username;
             let response = {
                 message:'Credentials are correct. User was found',
                 type:'success',
             }
+            console.log(response);
             res.send(response);
         }
     })
 })
+
+app.get('/api/logout',function(req,res){
+    console.log('/api/logout is being called. Session will get destroyed...');
+    req.session.destroy((err)=>{
+        if(err) return console.log(err);
+        console.log('Session destroyed');
+    });
+});
 
 app.post('/api/register',function(req,res){
     console.log('/api/register is being called');
@@ -99,9 +126,12 @@ app.post('/api/register',function(req,res){
                 let response = {
                     message:'User created!',
                     type:'success',
+                    username: req.body.username,
                 }
                 res.send(response);
             })
+            // Logging the user into the session
+            req.session.username = req.body.username;
         }else{
             // it did find the user!
             let response = {
@@ -114,37 +144,57 @@ app.post('/api/register',function(req,res){
 })
 
 app.post('/api/savePost', function(req,res){
-    console.log('/api/savePost is being called');
-    let newPost = new PostModel();
-    newPost.postUser = req.body.postUser;
-    newPost.postContent = req.body.postContent;
-    newPost.postComments = [];
-    newPost.save(function(err){
-        if(err) return console.log(err);
-        let response = {
-            message:'Post was saved successfully',
-            type:'success',
-        }
-        res.send(response);
-    })
+    let sess = req.session;
+    if(sess.username){
+        console.log('/api/savePost is being called');
+        let newPost = new PostModel();
+        newPost.postUser = sess.username;
+        newPost.postContent = req.body.postContent;
+        newPost.postComments = [];
+        newPost.save(function(err){
+            if(err) return console.log(err);
+            let response = {
+                message:'Post was saved successfully',
+                type:'success',
+            }
+            res.send(response);
+        })
+    }else{
+        res.send({
+            type:'error',
+            message:'Please login first'
+        })
+    }
+
 })
 
 app.post('/api/saveComment', function(req,res){
     console.log('/api/saveComment is being called');
     console.log(req.body);
-    // first must find the Post , must retrieve all its comments , then push the new comment, then update    
-    PostModel.find({ _id:req.body.postId },(err,docs)=>{
-        if(err) return console.log(err);
-        let newComments = [...docs[0].postComments]
-        newComments.push(req.body.postComment);
-        PostModel.update({ _id:req.body.postId },{ postComments:newComments },null,function(err,response){
+    let sess = req.session;
+    if(sess.username){
+        // first must find the Post , must retrieve all its comments , then push the new comment, then update    
+        PostModel.find({ _id:req.body.postId },(err,docs)=>{
             if(err) return console.log(err);
-            res.send({
-                message:'All went good!',
-                type:'success',
-            })
-        });
-    })
+            let newComments = [...docs[0].postComments]
+            let postComment = req.body.postComment;
+            postComment.postCommentAuthor = sess.username;
+            newComments.push(req.body.postComment);
+            PostModel.update({ _id:req.body.postId },{ postComments:newComments },null,function(err,response){
+                if(err) return console.log(err);
+                res.send({
+                    message:'All went good!',
+                    type:'success',
+                })
+            });
+        })
+    }else{
+        res.send({
+            type:'error',
+            message:'Please login first'
+        })
+    }
+
 })
 
 app.get('/api/posts',function(req,res){
