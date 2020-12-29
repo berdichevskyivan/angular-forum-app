@@ -8,4 +8,4 @@ Go to /backend , do an `npm install` , then do an `node server.js`
 
 Go to /frontend , do an `npm install` , then do an `ng serve -o`
 
-Happy testing! :)
+Happy testing! 😊
