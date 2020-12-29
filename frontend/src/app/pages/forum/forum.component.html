@@ -31,8 +31,8 @@
                     <h3 class="forumPostCreationDate">Posted on {{ post.creationDate.toString().split('T')[0] }}</h3>
                     <!--Post Create Comment Section-->
                     <div class="forumCreateCommentContainer">
-                        <textarea rows="2" cols="50" [(ngModel)]="post.currentComment"></textarea>
-                        <button mat-raised-button color="primary" (click)="handleClickPostComment(post)" style="margin-top:1rem">Post Comment</button>
+                        <textarea rows="2" cols="50" [(ngModel)]="post.currentComment" class="commentInput"></textarea>
+                        <button mat-raised-button color="primary" (click)="handleClickPostComment(post)" class="commentButton">Post Comment</button>
                     </div>
                     <!--Post Comments-->
                     <div class="commentsContainer">
