@@ -68,6 +68,12 @@ $mainColor: #00bfff;
   color: $mainColor;
   text-align: center;
   margin: 1rem;
+  width: 100%;
+  overflow: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-flow: column;
 }
 
 .forumPostTitle {
