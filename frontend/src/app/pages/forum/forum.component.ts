@@ -26,6 +26,7 @@ export class ForumComponent implements OnInit {
       if (data.type === 'success'){
         this.forumService.getPosts();
         console.log(this.forumService.userData.username);
+        this.forumService.userData.username = data.username;
       } else {
         // We log you out
         this.forumService.logout();

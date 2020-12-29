@@ -35,6 +35,7 @@ export class LoginComponent implements OnInit {
   ngOnInit(): void {
     this.forumService.validateSession().subscribe((data: SessionValidationResponse) => {
       if (data.type === 'success'){
+        this.forumService.userData.username = data.username;
         this.router.navigateByUrl('/forum');
       }
     });

@@ -37,6 +37,7 @@ export interface SavePostCommentResponse {
 export interface SessionValidationResponse {
     type: string;
     message: string;
+    username: string;
 }
 
 export interface UserData {
