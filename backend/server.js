@@ -7,11 +7,6 @@ const session = require('express-session');
 
 const cors = require('cors');
 
-const redis = require('redis');
-const redisStore = require('connect-redis')(session);
-
-const client = redis.createClient();
-
 const { update } = require('./models/UserModel');
 const app = express();
 
