@@ -1,0 +1,161 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+.appTitle {
+  font-family: 'Press Start 2P';
+  transform: translateY(-60px);
+  font-size: 62px;
+  transition: all 1s;
+}
+
+.appTitleLogin {
+  @extend .appTitle;
+  color: #00bfff;
+}
+
+.appTitleRegister {
+  @extend .appTitle;
+  color: red;
+}
+
+.authContainer {
+  height:100%;
+  width:100%;
+  background: black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-flow: column;
+}
+
+.authForm {
+  height: 30rem;
+  width: 20rem;
+  transition: border 1s;
+}
+
+.authFormLogin {
+  @extend .authForm;
+  border: 2px solid #00bfff;
+
+}
+
+.authFormRegister {
+  @extend .authForm;
+  border: 2px solid red;
+}
+
+.authFormHeader {
+  height: 10%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-flow: row;
+}
+
+.authFormHeaderButton {
+  width: 50%;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  background: black;
+  outline: none;
+  transition: color 1s, border 1s;
+  cursor: pointer;
+}
+
+.authFormHeaderButtonLogin {
+  @extend .authFormHeaderButton;
+  color: #00bfff;
+  border: 2px solid #00bfff;
+}
+
+.authFormHeaderButtonRegister {
+  @extend .authFormHeaderButton;
+  color: red;
+  border: 2px solid red;
+}
+
+.authFormImageContainer {
+  height: 40%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.lottieContainer {
+  height: 8rem;
+  width: 8rem;
+}
+
+.authFormImage {
+  height: 100%;
+  width: 100%;
+}
+
+.authFormFields {
+  height: 50%;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex-flow: column;
+}
+
+.authFormField {
+  margin: 0.5rem;
+  background: black;
+  padding: 0.5rem;
+  outline: none;
+  transition: color 1s, border 1s;
+}
+
+.authFormFieldLogin {
+  @extend .authFormField;
+  color: #00bfff;
+  border: 1px solid #00bfff;
+}
+
+.authFormFieldRegister {
+  @extend .authFormField;
+  color: red;
+  border: 1px solid red;
+}
+
+.authFormFieldLabel {
+  color: white;
+  margin: 0;
+  font-size: 12px;
+  transition: color 1s;
+}
+
+.authFormFieldLabelLogin {
+  @extend .authFormFieldLabel;
+  color: #00bfff;
+}
+
+.authFormFieldLabelRegister {
+  @extend .authFormFieldLabel;
+  color: red;
+}
+
+.authFormButton {
+  background: black;
+  margin-top: 1rem;
+  padding: 0.5rem;
+  transition: all 1s;
+}
+
+.authFormButton:focus {
+  outline: none;
+}
+
+.authFormButtonLogin {
+  @extend .authFormButton;
+  color: #00bfff;
+  border: 1px solid #00bfff;
+}
+
+.authFormButtonRegister {
+  @extend .authFormButton;
+  color: red;
+  border: 1px solid red;
+}

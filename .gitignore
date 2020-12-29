@@ -44,3 +44,6 @@ testem.log
 # System Files
 .DS_Store
 Thumbs.db
+
+# All the Node Modules. User has to install in their own machine
+node_modules/

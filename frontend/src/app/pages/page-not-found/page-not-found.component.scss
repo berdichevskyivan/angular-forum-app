@@ -1,0 +1,22 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+.pageNotFoundContainer {
+  height: 100%;
+  width: 100%;
+  background: black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-flow: column;
+}
+
+.pageNotFoundText {
+  color: #00bfff;
+  font-family: 'Press Start 2P';
+}
+
+.lottieContainer {
+  height: 20rem;
+  width: 20rem;
+  margin-bottom: 2rem;
+}

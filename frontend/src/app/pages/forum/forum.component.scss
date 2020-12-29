@@ -1,0 +1,115 @@
+$mainColor: #00bfff;
+
+.forumContainer {
+  height: 100%;
+  width: 100%;
+  background: black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-flow: column;
+}
+
+.loaderContainer {
+  @extend .forumContainer;
+}
+
+.forumContainerHeader {
+  height: 10%;
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex-flow: row;
+}
+
+.forumContainerHeaderButton {
+  height: 40%;
+  width: 10rem;
+  background: black;
+  color: $mainColor;
+  border: 1px solid $mainColor;
+  cursor: pointer;
+  outline: none;
+  margin: 1rem;
+  font-size: 12px;
+}
+
+.forumContainerHeaderButton:hover {
+  background: $mainColor;
+  color: black;
+  border: 1px solid black;
+}
+
+.forumContainerPosts {
+  height: 90%;
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  flex-flow: row;
+  padding-top:0;
+  overflow-x: auto;
+  overflow-y: auto;
+}
+
+.forumPost {
+  border: 2px solid $mainColor;
+  width: 40rem;
+  margin: 1rem;
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-flow: column;
+}
+
+.forumPostContent {
+  color: $mainColor;
+  text-align: center;
+  margin: 1rem;
+}
+
+.forumPostTitle {
+  color: $mainColor;
+  text-align: center;
+  margin: 1rem;
+  font-size: 40px;
+  font-weight: bolder;
+}
+
+.forumPostCreationDate {
+  color: $mainColor;
+  text-align: center;
+  margin: 1rem;
+}
+
+.forumPostAuthor {
+  color: $mainColor;
+  text-align: center;
+  margin: 1rem;
+}
+
+.forumPostComment {
+  width: 100%;
+}
+
+.forumPostCommentText {
+  color: $mainColor;
+}
+
+.commentsContainer {
+  overflow: auto;
+  display: flex;
+  align-items: center;
+  flex-flow: column;
+  width: 100%;
+  height: 30%;
+}
+
+.forumCreateCommentContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-flow: column;
+}

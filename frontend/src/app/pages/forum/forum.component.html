@@ -1,0 +1,49 @@
+<ng-container *ngIf="this.forumService.isLoading">
+    <div class="loaderContainer">
+        <ng-lottie [options]="loaderAnimationOptions"></ng-lottie>
+    </div>
+</ng-container>
+
+<ng-container *ngIf="!this.forumService.isLoading">
+
+    <div class="forumContainer">
+        <!--Header where buttons will go-->
+        <div class="forumContainerHeader">
+            <button class="forumContainerHeaderButton" (click)="handleClickCreatePostButton()">Create Post</button>
+            <button class="forumContainerHeaderButton" (click)="handleClickLogoutButton()">Logout</button>
+        </div>
+        <!--Space where posts will be displayed or message for No Posts will be displayed-->
+        <div class="forumContainerPosts">
+            <!--We show the spinner-->
+            <!--We show No Posts Found-->
+            <ng-container *ngIf="this.forumService.posts.length === 0">
+                <h1 style="color:white">There are zero posts</h1>
+            </ng-container>
+            <!--We show the posts-->
+            <ng-container *ngIf="this.forumService.posts.length > 0">
+                <div *ngFor="let post of this.forumService.posts.reverse()" class="forumPost">
+                    <!--Post Title-->
+                    <h1 class="forumPostTitle">{{ post.title }}</h1>
+                    <!--Post Content-->
+                    <div [innerHTML]="post.content" class="forumPostContent"></div>
+                    <!--Post Author-->
+                    <h3 class="forumPostAuthor">Posted by {{ post.author }}</h3>
+                    <h3 class="forumPostCreationDate">Posted on {{ post.creationDate.toString().split('T')[0] }}</h3>
+                    <!--Post Create Comment Section-->
+                    <div class="forumCreateCommentContainer">
+                        <textarea rows="2" cols="50" [(ngModel)]="post.currentComment"></textarea>
+                        <button mat-raised-button color="primary" (click)="handleClickPostComment(post)" style="margin-top:1rem">Post Comment</button>
+                    </div>
+                    <!--Post Comments-->
+                    <div class="commentsContainer">
+                        <div *ngFor="let comment of post.comments.reverse()" class="forumPostComment">
+                            <h3 class="forumPostCommentText">{{ comment.content }}</h3>
+                            <h3 class="forumPostCommentText">Commented by {{ comment.author }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </ng-container>
+        </div>
+    </div>
+
+</ng-container>

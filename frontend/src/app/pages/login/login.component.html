@@ -1,0 +1,43 @@
+<div class="authContainer">
+    <h1 [ngClass]="{'appTitleLogin':currentActivePage==='login','appTitleRegister':currentActivePage==='register'}">Forum App</h1>
+    <div  [ngClass]="{'authFormLogin':currentActivePage==='login','authFormRegister':currentActivePage==='register'}" >
+        <!--Header-->
+        <div class="authFormHeader">
+            <button [ngClass]="{'authFormHeaderButtonLogin':currentActivePage==='login','authFormHeaderButtonRegister':currentActivePage==='register'}" (click)="handleClickLoginButton()">Login</button>
+            <button [ngClass]="{'authFormHeaderButtonLogin':currentActivePage==='login','authFormHeaderButtonRegister':currentActivePage==='register'}" (click)="handleClickRegisterButton()">Register</button>
+        </div>
+        <!--Image-->
+        <div class="authFormImageContainer">
+            <div class="lottieContainer">
+                <ng-container *ngIf="currentActivePage==='login'">
+                    <ng-lottie [options]="loginAnimationOptions" (animationCreated)="animationCreated($event)"></ng-lottie>
+                </ng-container>
+                <ng-container *ngIf="currentActivePage==='register'">
+                    <ng-lottie [options]="registerAnimationOptions" (animationCreated)="animationCreated($event)"></ng-lottie>
+                </ng-container>
+            </div>
+        </div>
+        <!--Fields-->
+        <form #authForm="ngForm" (ngSubmit)="handleSubmitAuthForm(authForm)" class="authFormFields">
+
+            <h1 [ngClass]="{'authFormFieldLabelLogin':currentActivePage==='login','authFormFieldLabelRegister':currentActivePage==='register'}">Username</h1>
+
+            <input label="username"
+                   [ngClass]="{'authFormFieldLogin':currentActivePage==='login','authFormFieldRegister':currentActivePage==='register'}"
+                   required
+                   name="username"
+                   ngModel>
+
+            <h1 [ngClass]="{'authFormFieldLabelLogin':currentActivePage==='login','authFormFieldLabelRegister':currentActivePage==='register'}">Password</h1>
+
+            <input label="password"
+                   type="password"
+                   [ngClass]="{'authFormFieldLogin':currentActivePage==='login','authFormFieldRegister':currentActivePage==='register'}"
+                   required
+                   name="password"
+                   ngModel>
+
+            <button type="submit" [ngClass]="{'authFormButtonLogin':currentActivePage==='login','authFormButtonRegister':currentActivePage==='register'}">Submit</button>
+        </form>
+    </div>
+</div>
