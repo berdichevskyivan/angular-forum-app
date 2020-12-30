@@ -6,6 +6,7 @@ export interface AuthData {
 export interface AuthResponse {
     type: string;
     message: string;
+    username: string;
 }
 
 export interface Post {

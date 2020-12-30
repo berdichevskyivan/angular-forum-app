@@ -1,0 +1,129 @@
+$mainColor: #00bfff;
+
+.forumPostContainer {
+  height: 100%;
+  width: 100%;
+  background: black;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex-flow: column;
+}
+
+.loaderContainer {
+  @extend .forumPostContainer;
+}
+
+.forumPostContainerHeader {
+  height: 10%;
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex-flow: row;
+}
+
+.forumPostContainerHeaderButton {
+  height: 40%;
+  width: 10rem;
+  background: black;
+  color: $mainColor;
+  border: 1px solid $mainColor;
+  cursor: pointer;
+  outline: none;
+  margin: 1rem;
+  font-size: 12px;
+}
+
+.forumPostContainerHeaderButton:hover {
+  background: $mainColor;
+  color: black;
+  border: 1px solid black;
+}
+
+.forumPostContentContainer {
+  @extend .forumPostContainer;
+  height: fit-content;
+  justify-content: flex-start;
+  overflow: auto;
+}
+
+.forumPostContentContainer::-webkit-scrollbar {
+  display: none;
+}
+
+.forumPostContent {
+  color: $mainColor;
+  text-align: center;
+  margin: 1rem;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-flow: column;
+  background: black;
+}
+
+.forumPostTitle {
+  color: $mainColor;
+  text-align: center;
+  margin: 1rem;
+  font-size: 40px;
+  font-weight: bolder;
+  cursor: pointer;
+}
+
+.forumPostCreationDate {
+  color: $mainColor;
+  text-align: center;
+}
+
+.forumPostAuthor {
+  color: $mainColor;
+  text-align: center;
+  margin: 1rem;
+}
+
+.forumPostComment {
+  width: 40%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-flow: column;
+  border: 2px solid $mainColor;
+  padding: 1rem;
+  margin: 1rem;
+}
+
+.commentInput {
+  background: black;
+  border: 2px solid $mainColor;
+  color: $mainColor;
+  outline: none;
+  font-size: 16px;
+}
+
+.commentButton {
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}
+
+.forumPostCommentText {
+  color: $mainColor;
+  margin-top: 1rem;
+}
+
+.commentsContainer {
+  display: flex;
+  align-items: center;
+  flex-flow: column;
+  width: 100%;
+  background: black;
+}
+
+.forumCreateCommentContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-flow: column;
+}

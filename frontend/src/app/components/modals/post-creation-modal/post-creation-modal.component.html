@@ -1,0 +1,16 @@
+<h1 mat-dialog-title>Create a Post</h1>
+
+<form #postCreationForm="ngForm" (ngSubmit)="handleCreatePost(postCreationForm)" mat-dialog-content>
+    <mat-form-field>
+        <mat-label>Post Title</mat-label>
+        <input matInput [(ngModel)]="post.title" name="title" required>
+    </mat-form-field>
+    <div [froalaEditor] [(froalaModel)]="post.content" class="postContent">
+        <input name="content" [(ngModel)]="post.content" style="display: none" required />
+    </div>
+    <div mat-dialog-actions>
+        <button mat-raised-button color="primary" type="submit">Create Post</button>
+    </div>
+</form>
+
+

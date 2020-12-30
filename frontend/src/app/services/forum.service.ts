@@ -57,6 +57,10 @@ export class ForumService {
         });
     }
 
+    getPost(id: string): Observable<Post>  {
+        return this.post('/api/post', { postId: id });
+    }
+
     saveComment( postComment: PostComment ): Observable<any> {
         return this.post('/api/saveComment', postComment);
     }

@@ -16,31 +16,23 @@
         <div class="forumContainerPosts">
             <!--We show the spinner-->
             <!--We show No Posts Found-->
-            <ng-container *ngIf="this.forumService.posts.length === 0">
-                <h1 style="color:white">There are zero posts</h1>
+            <ng-container *ngIf="(this.forumService.posts.length === 0 && !this.forumService.isLoading)">
+                <div class="zeroPostContainer">
+                    <h1 class="zeroPostText">There are zero posts</h1>
+                </div>
+
             </ng-container>
             <!--We show the posts-->
             <ng-container *ngIf="this.forumService.posts.length > 0">
                 <div *ngFor="let post of this.forumService.posts.reverse()" class="forumPost">
-                    <!--Post Title-->
-                    <h1 class="forumPostTitle">{{ post.title }}</h1>
-                    <!--Post Content-->
-                    <div [innerHTML]="post.content" class="forumPostContent"></div>
-                    <!--Post Author-->
-                    <h3 class="forumPostAuthor">Posted by {{ post.author }}</h3>
-                    <h3 class="forumPostCreationDate">Posted on {{ post.creationDate.toString().split('T')[0] }}</h3>
-                    <!--Post Create Comment Section-->
-                    <div class="forumCreateCommentContainer">
-                        <textarea rows="2" cols="50" [(ngModel)]="post.currentComment" class="commentInput"></textarea>
-                        <button mat-raised-button color="primary" (click)="handleClickPostComment(post)" class="commentButton">Post Comment</button>
+                    <div style="width: 4rem;height: 100%;">
+                        <ng-lottie [options]="postAnimationOptions"></ng-lottie>
                     </div>
-                    <!--Post Comments-->
-                    <div class="commentsContainer">
-                        <div *ngFor="let comment of post.comments.reverse()" class="forumPostComment">
-                            <h3 class="forumPostCommentText">{{ comment.content }}</h3>
-                            <h3 class="forumPostCommentText">Commented by {{ comment.author }}</h3>
-                        </div>
-                    </div>
+                    <h1 class="forumPostTitle" (click)="handleClickOnPostTitle(post._id)">{{ post.title }}</h1>
+                    <h3 class="forumPostAuthor">Posted by <b>{{ post.author }}</b></h3>
+                    <h3 class="commentAmount">{{ post.comments.length }}</h3>
+                    <img src="../../../assets/comments.svg" style="height: 1rem; width: 1rem;"/>
+                    <h3 class="forumPostCreationDate">Posted on <b>{{ post.creationDate.toString().split('T')[0].split('-').reverse().join('/') }}</b></h3>
                 </div>
             </ng-container>
         </div>

@@ -1,11 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { ForumService } from '../../services/forum.service';
-import {Post, PostComment, SavePostResponse, SavePostCommentResponse, SessionValidationResponse, AuthResponse} from '../../models/models';
-
-import { PostCreationModalComponent } from '../../components/post-creation-modal/post-creation-modal.component';
+import { PostCreationModalComponent } from '../../components/modals/post-creation-modal/post-creation-modal.component';
 import { MatDialog } from '@angular/material/dialog';
-import {Router} from '@angular/router';
-import {AnimationOptions} from 'ngx-lottie';
+import { Router } from '@angular/router';
+import { AnimationOptions } from 'ngx-lottie';
+import {SocketService} from '../../services/socket.service';
 
 @Component({
   selector: 'app-forum',
@@ -18,33 +17,24 @@ export class ForumComponent implements OnInit {
     path: '/assets/loader.json'
   };
 
-  constructor(public forumService: ForumService, public dialog: MatDialog, private router: Router) { }
+  public postAnimationOptions: AnimationOptions = {
+    path: '/assets/post.json'
+  };
+
+  constructor(public forumService: ForumService, public socketService: SocketService, public dialog: MatDialog, private router: Router) { }
 
   ngOnInit(): void {
 
-    this.forumService.validateSession().subscribe((data: SessionValidationResponse) => {
-      if (data.type === 'success'){
-        this.forumService.getPosts();
-        console.log(this.forumService.userData.username);
-        this.forumService.userData.username = data.username;
-      } else {
-        // We log you out
-        this.forumService.logout();
-        this.router.navigateByUrl('/login');
-      }
-    });
+    this.socketService.validateSession(false);
+    this.socketService.getPosts();
 
   }
 
   handleClickLogoutButton(): void {
+
     this.forumService.isLoading = true;
-    this.forumService.logout().subscribe((data: AuthResponse) => {
-      this.forumService.isLoading = false;
-      console.log(data);
-      if (data.type === 'success'){
-        this.router.navigateByUrl('/login');
-      }
-    });
+
+    this.socketService.logout();
 
   }
 
@@ -56,22 +46,10 @@ export class ForumComponent implements OnInit {
 
   }
 
-  handleClickPostComment(post: Post): void {
-
-    const newComment: PostComment = {
-      author: this.forumService.userData.username,
-      content: post.currentComment,
-      postId: post._id,
-    };
-
-    console.log(newComment);
-
-    this.forumService.saveComment(newComment).subscribe((data: SavePostCommentResponse) => {
-
-      this.forumService.getPosts();
-
-    });
-
+  handleClickOnPostTitle(id: string): void {
+   console.log(id);
+   this.router.navigateByUrl(`/forum-post?id=${id}`);
+   this.forumService.isLoading = true;
   }
 
 }

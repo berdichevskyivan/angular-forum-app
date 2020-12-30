@@ -1,0 +1,33 @@
+<ng-container *ngIf="this.forumService.isLoading">
+    <div class="loaderContainer">
+        <ng-lottie [options]="loaderAnimationOptions"></ng-lottie>
+    </div>
+</ng-container>
+
+<ng-container *ngIf="!this.forumService.isLoading">
+
+    <div class="forumPostContainer">
+        <!--Header where buttons will go-->
+        <div class="forumPostContainerHeader">
+            <button class="forumPostContainerHeaderButton" (click)="handleClickGoBackButton()">Go Back</button>
+        </div>
+        <!--Space where posts will be displayed or message for No Posts will be displayed-->
+        <div class="forumPostContentContainer">
+            <h1 class="forumPostTitle">{{ post.title }}</h1>
+            <div [innerHTML]="post.content" class="forumPostContent"></div>
+            <h3 class="forumPostAuthor">Posted by <b>{{ post.author }}</b></h3>
+            <h3 class="forumPostCreationDate">Posted on <b>{{ post.creationDate.toString().split('T')[0].split('-').reverse().join('/') }}</b></h3>
+            <div class="forumCreateCommentContainer">
+                <textarea rows="4" cols="50" [(ngModel)]="post.currentComment" class="commentInput"></textarea>
+                <button mat-raised-button color="primary" (click)="handleClickPostComment(post)" class="commentButton">Post Comment</button>
+            </div>
+            <div class="commentsContainer">
+                <div *ngFor="let comment of post.comments.reverse()" class="forumPostComment">
+                    <h3 class="forumPostCommentText">{{ comment.content }}</h3>
+                    <h3 class="forumPostCommentText">Commented by <b>{{ comment.author }}</b></h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</ng-container>

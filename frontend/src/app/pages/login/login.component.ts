@@ -1,17 +1,15 @@
 import { Component, OnInit } from '@angular/core';
-
 import { AnimationItem } from 'lottie-web';
 import { AnimationOptions } from 'ngx-lottie';
-
 import { NgForm } from '@angular/forms';
-
 import { AuthData, AuthResponse, SessionValidationResponse } from '../../models/models';
-
 import { ForumService } from '../../services/forum.service';
-
 import { MatSnackBar } from '@angular/material/snack-bar';
-
 import { Router } from '@angular/router';
+import {SocketService} from '../../services/socket.service';
+
+import { map } from 'rxjs/operators';
+
 
 @Component({
   selector: 'app-login',
@@ -30,15 +28,10 @@ export class LoginComponent implements OnInit {
       path: '/assets/fire.json'
   };
 
-  constructor(private forumService: ForumService, private snackbar: MatSnackBar, private router: Router) { }
+  constructor(private forumService: ForumService, private socketService: SocketService, private snackbar: MatSnackBar, private router: Router) { }
 
   ngOnInit(): void {
-    this.forumService.validateSession().subscribe((data: SessionValidationResponse) => {
-      if (data.type === 'success'){
-        this.forumService.userData.username = data.username;
-        this.router.navigateByUrl('/forum');
-      }
-    });
+    this.socketService.validateSession(false);
   }
 
   handleClickLoginButton(): void {
@@ -60,35 +53,13 @@ export class LoginComponent implements OnInit {
       const authData: AuthData = f.value;
       console.log(authData);
 
-      if (this.currentActivePage === 'login'){
+      if (this.currentActivePage === 'login') {
 
-        this.forumService.login(authData).subscribe((authResponse: AuthResponse) => {
+        this.socketService.login(authData);
 
-          console.log(authResponse);
+      } else if (this.currentActivePage === 'register'){
 
-          this.snackbar.open(authResponse.message, '', { duration: 2000 });
-
-          if (authResponse.type === 'success'){
-            this.forumService.userData.username = authData.username;
-            this.router.navigateByUrl('/forum');
-          }
-
-        });
-
-      }else if (this.currentActivePage === 'register'){
-
-        this.forumService.register(authData).subscribe((authResponse: AuthResponse) => {
-
-          console.log(authResponse);
-
-          this.snackbar.open(authResponse.message, '', { duration: 2000 });
-
-          if (authResponse.type === 'success'){
-            this.forumService.userData.username = authData.username;
-            this.router.navigateByUrl('/forum');
-          }
-
-        });
+        this.socketService.register(authData);
 
       }
 

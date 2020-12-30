@@ -10,8 +10,14 @@ const cors = require('cors');
 const { update } = require('./models/UserModel');
 const app = express();
 
-app.use(express.json());
-app.use(express.urlencoded());
+const http = require('http').createServer(app);
+const io = require('socket.io')(http, {
+    cors:{
+        origin:'http://localhost:4200',
+        methods: ['GET','POST'],
+        credentials: true,
+    }
+});
 
 // we initialize the session and we provide a secret
 app.use(session({
@@ -35,178 +41,249 @@ app.use(cors({
     })
 })();
 
-app.get('/api/validateSession',function(req,res){
-    console.log('/api/validateSession is being called');
-    console.log(req.session);
-    if(req.session.username){
-        // means session is valid
-        res.send({
-            type:'success',
-            message:'Session is valid',
-            username: req.session.username,
-        })
-    }else{
-        res.send({
-            type:'error',
-            message:'Session is invalid',
-        })
-    }
-});
+io.on('connection',(socket) => {
 
-app.post('/api/login',function(req,res){
-    console.log('/api/login is being called');
-    console.log(req.body);
-    UserModel.find({username:req.body.username,password:req.body.password},(err,docs)=>{
-        if (err){
-            return console.log(err);
-        } else {
-            console.log(docs);
-            // it did NOT find the user
-            if(docs.length===0){
-                let response = {
-                    message:'The user was not found',
-                    type:'error',
-                };
-                console.log(response);
-                res.send(response);
-            }else{
-                // it did find the user!
-                // by assigning a property to the session, Session is initiated and SessionID is fixed until destroyed
-                req.session.username = req.body.username;
-                console.log(req.session);
-                let response = {
-                    message:'Credentials are correct. User was found',
-                    type:'success',
-                };
-                console.log(response);
-                res.send(response);
+    console.log('A user connected');
+
+    socket.on('disconnect', () => {
+        console.log('A user disconnected');
+    });
+
+    // validateSession
+    socket.on('validateSessionRequest', () => {
+        let response = {};
+        console.log('validateSessionRequest is being called');
+        console.log(session);
+        if(session.username){
+            // means session is valid
+            response = {
+                type:'success',
+                message:'Session is valid',
+                username: session.username,
+            }
+        }else{
+            response = {
+                type:'error',
+                message:'Session is invalid',
             }
         }
+        socket.emit('validateSessionResponse', response);
+    });
 
-    })
-});
+    // login
+    socket.on('loginRequest', (authData) => {
+        let response = {};
+        console.log('loginRequest is being called');
 
-app.get('/api/logout',function(req,res){
-    console.log('/api/logout is being called. Session will get destroyed...');
-    req.session.destroy((err)=>{
-        if(err) return console.log(err);
-        console.log('Session destroyed');
-        res.send({
+        UserModel.find({username:authData.username,password:authData.password},(err,docs)=>{
+            if (err){
+                return console.log(err);
+            } else {
+                console.log(docs);
+                // it did NOT find the user
+                if(docs.length===0){
+                    response = {
+                        message:'The user was not found',
+                        type:'error',
+                    };
+                    console.log(response);
+                    socket.emit('loginResponse', response);
+                }else{
+                    // it did find the user!
+                    // by assigning a property to the session, Session is initiated and SessionID is fixed until destroyed
+                    session.username = authData.username;
+                    console.log(session);
+                    response = {
+                        message:'Credentials are correct. User was found',
+                        type:'success',
+                    };
+                    console.log(response);
+                    socket.emit('loginResponse', response);
+                }
+            }
+
+        });
+    });
+
+    // logout
+    socket.on('logoutRequest', () => {
+
+        let response = {};
+
+        console.log('logoutRequest is being called. Session will get destroyed...');
+
+        delete session.username;
+
+        response = {
             type:'success',
-            message:'Logged out correctly',
+            message:'Logged out correctly'
+        };
+
+        socket.emit('logoutResponse', response);
+
+    });
+
+    // register
+    socket.on('registerRequest', (authData) => {
+        let response = {};
+        console.log('registerRequest is being called');
+
+        // first we will check if user already exists
+        UserModel.find({username:authData.username},(err,docs)=>{
+            if (err){
+                return console.log(err);
+            } else {
+                console.log(docs);
+                // it did NOT find the user
+                if(docs.length===0){
+                    let newUser = new UserModel();
+                    newUser.username = authData.username;
+                    newUser.password = authData.password;
+                    newUser.save(function(err){
+                        if(err) return console.log(err)
+                        response = {
+                            message:'User created!',
+                            type:'success',
+                            username: authData.username,
+                        };
+                        socket.emit('registerResponse', response);
+                    });
+                    // Logging the user into the session
+                    session.username = authData.username;
+                }else{
+                    // it did find the user!
+                    response = {
+                        message:'User already exists',
+                        type:'error',
+                    };
+                    socket.emit('registerResponse', response);
+                }
+            }
+
         })
     });
-});
 
-app.post('/api/register',function(req,res){
-    console.log('/api/register is being called');
-    console.log(req.body);
-    // first we will check if user already exists
-    UserModel.find({username:req.body.username,password:req.body.password},(err,docs)=>{
-        if (err){
-            return console.log(err);
-        } else {
-            console.log(docs);
-            // it did NOT find the user
-            if(docs.length===0){
-                let newUser = new UserModel();
-                newUser.username = req.body.username;
-                newUser.password = req.body.password;
-                newUser.save(function(err){
-                    if(err) return console.log(err)
-                    let response = {
-                        message:'User created!',
-                        type:'success',
-                        username: req.body.username,
-                    };
-                    res.send(response);
-                });
-                // Logging the user into the session
-                req.session.username = req.body.username;
-            }else{
-                // it did find the user!
-                let response = {
-                    message:'User already exists',
-                    type:'error',
+    // savePost
+    socket.on('savePostRequest', (post) => {
+
+        console.log('savePostRequest is being called');
+
+        let response = {};
+
+        if(session.username){
+
+            let newPost = new PostModel();
+            newPost.title = post.title;
+            newPost.content = post.content;
+            newPost.author = post.author;
+            newPost.creationDate = new Date(Date.now());
+            newPost.comments = [];
+            newPost.save(function(err){
+                if(err) return console.log(err);
+                response = {
+                    message:'Post was saved successfully',
+                    type:'success',
                 };
-                res.send(response);
-            }
+                socket.emit('savePostResponse', response);
+
+                PostModel.find({},(err,docs)=>{
+                    if(err) return console.log(err);
+                    io.emit('postsResponse', docs);
+                })
+
+            })
+
+        }else{
+
+            response = {
+                type:'error',
+                message:'Please login first'
+            };
+
+            socket.emit('savePostResponse', response);
+
         }
 
-    })
-});
+    });
 
-app.post('/api/savePost', function(req,res){
+    // saveComment
+    socket.on('saveCommentRequest', (comment) => {
+        let response = {};
+        console.log('saveCommentRequest is being called');
 
-    if(req.session.username){
+        if(session.username){
+            // first must find the Post , must retrieve all its comments , then push the new comment, then update
+            PostModel.find({ _id:comment.postId },(err,docs)=>{
+                if(err) return console.log(err);
+                let newComments = [...docs[0].comments]
+                let postComment = { };
+                postComment.author = comment.author;
+                postComment.content = comment.content;
+                newComments.push( postComment );
+                PostModel.update({ _id:comment.postId },{ comments:newComments }, null, function(err,response){
+                    if (err){
+                        console.log(err);
+                    } else {
+                        response = {
+                            message:'All went good!',
+                            type:'success',
+                        };
+                        socket.emit('saveCommentResponse', response);
 
-        console.log('/api/savePost is being called');
-        let newPost = new PostModel();
-        newPost.title = req.body.title;
-        newPost.content = req.body.content;
-        newPost.author = req.body.author;
-        newPost.creationDate = new Date(Date.now());
-        newPost.comments = [];
-        newPost.save(function(err){
-            if(err) return console.log(err);
-            let response = {
-                message:'Post was saved successfully',
-                type:'success',
+                        PostModel.find({ _id: comment.postId },(err,docs)=>{
+                            if (err) {
+                                console.log(err);
+                            } else {
+                                io.emit('postResponse', docs[0]);
+                                PostModel.find({},(err,docs)=>{
+                                    if(err) return console.log(err);
+                                    io.emit('postsResponse', docs);
+                                })
+                            }
+                        })
+
+                    }
+                });
+            })
+        }else{
+            response = {
+                type:'error',
+                message:'Please login first'
             };
-            res.send(response);
-        })
+            socket.emit('saveCommentResponse', response);
+        }
 
-    }else{
+    });
 
-        res.send({
-            type:'error',
-            message:'Please login first'
-        })
+    // posts
+    socket.on('postsRequest', () => {
 
-    }
+        console.log('postsRequest is being called');
 
-});
-
-app.post('/api/saveComment', function(req,res){
-    console.log('/api/saveComment is being called');
-    console.log(req.body);
-    if(req.session.username){
-        // first must find the Post , must retrieve all its comments , then push the new comment, then update    
-        PostModel.find({ _id:req.body.postId },(err,docs)=>{
+        PostModel.find({},(err,docs)=>{
             if(err) return console.log(err);
-            let newComments = [...docs[0].comments]
-            let postComment = { };
-            postComment.author = req.body.author;
-            postComment.content = req.body.content;
-            newComments.push( postComment );
-            PostModel.update({ _id:req.body.postId },{ comments:newComments }, null, function(err,response){
-                if (err){
-                    console.log(err);
-                } else {
-                    res.send({
-                        message:'All went good!',
-                        type:'success',
-                    })
-                }
-            });
+            socket.emit('postsResponse', docs);
         })
-    }else{
-        res.send({
-            type:'error',
-            message:'Please login first'
+
+    });
+
+    // post
+    socket.on('postRequest', (postId) => {
+
+        console.log('postRequest is being called');
+
+        PostModel.find({ _id: postId },(err,docs)=>{
+            if (err) {
+                console.log(err);
+            } else {
+                socket.emit('postResponse', docs[0]);
+            }
         })
-    }
+
+    });
 
 });
 
-app.get('/api/posts',function(req,res){
-    console.log('GET /api/posts is being called');
-    PostModel.find({},(err,docs)=>{
-        if(err) return console.log(err);
-        res.send(docs);
-    })
-});
-
-app.listen(9000,()=>{
-    console.log('listening on port 9000');
+http.listen(3000,() => {
+    console.log('WebSockets listening on Port 3000');
 });
