@@ -113,3 +113,12 @@ $mainColor: #00bfff;
   font-family: 'Press Start 2P';
   font-size: 60px;
 }
+
+.virtualScroll {
+  height: 100%;
+  width: 100%;
+}
+
+.virtualScroll::-webkit-scrollbar {
+  display: none;
+}

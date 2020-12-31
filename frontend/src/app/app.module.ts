@@ -27,6 +27,7 @@ import { AuthService } from './services/auth.service';
 import { AuthGuardService } from './services/auth-guard.service';
 import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
 import {SocketService} from './services/socket.service';
+import {ScrollingModule} from '@angular/cdk/scrolling';
 
 const config: SocketIoConfig = { url: 'http://localhost:3000', options: { transports: ['websocket'] }};
 
@@ -58,6 +59,7 @@ export function playerFactory(): any{
     CommonModule,
     LottieModule.forRoot({ player: playerFactory }),
     MatDialogModule,
+    ScrollingModule,
     SocketIoModule.forRoot(config)],
   providers: [ForumService, SocketService, AuthService, AuthGuardService, { provide: MatDialogRef, useValue: {} }],
   bootstrap: [AppComponent]

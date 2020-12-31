@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
-import { ForumService } from '../../services/forum.service';
-import { PostCreationModalComponent } from '../../components/modals/post-creation-modal/post-creation-modal.component';
-import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
-import { AnimationOptions } from 'ngx-lottie';
+import {Component, OnInit} from '@angular/core';
+import {ForumService} from '../../services/forum.service';
+import {PostCreationModalComponent} from '../../components/modals/post-creation-modal/post-creation-modal.component';
+import {MatDialog} from '@angular/material/dialog';
+import {Router} from '@angular/router';
+import {AnimationOptions} from 'ngx-lottie';
 import {SocketService} from '../../services/socket.service';
 
 @Component({
