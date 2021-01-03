@@ -1,17 +1,22 @@
 import { Injectable } from '@angular/core';
 import {ForumService} from './forum.service';
-import {SessionValidationResponse} from '../models/models';
-import {SocketService} from './socket.service';
-
-import { map } from 'rxjs/operators';
+import {Router} from '@angular/router';
 
 @Injectable()
 export class AuthService {
 
-    constructor(private forumService: ForumService, private socketService: SocketService){  }
+    constructor(private forumService: ForumService, private router: Router){  }
 
-    public isAuthenticated(): void {
-        this.socketService.validateSession(true);
+    public async isAuthenticated(): Promise<boolean> {
+        const result = await this.forumService.validateSession().toPromise();
+        if (result.type === 'success') {
+            this.forumService.userData.username = result.username;
+            return true;
+        } else {
+            this.router.navigateByUrl('login');
+            return false;
+        }
     }
+
 
 }

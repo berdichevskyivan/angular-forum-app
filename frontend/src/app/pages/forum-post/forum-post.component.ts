@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ForumService } from '../../services/forum.service';
 import { Router, ActivatedRoute } from '@angular/router';
-import { Post, PostComment } from '../../models/models';
+import {Post, PostComment, SavePostCommentResponse, SavePostResponse} from '../../models/models';
 import { AnimationOptions } from 'ngx-lottie';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import {SocketService} from '../../services/socket.service';
@@ -29,18 +29,25 @@ export class ForumPostComponent implements OnInit {
 
   ngOnInit(): void {
 
-    this.socketService.socket.on('postResponse', (postResponse: Post) => {
-        this.post = postResponse;
-        this.forumService.isLoading = false;
+    this.socketService.socket.on('updateComments', (post: Post) => {
+      console.log('getting a response -> updateComments');
+      this.post = post;
     });
+
+    this.forumService.isLoading = true;
 
     this.route.queryParams.subscribe(params => {
       if (!params.id) {
+        this.forumService.isLoading = false;
         this.router.navigateByUrl('forum');
       } else {
         this.postId = params.id;
 
-        this.socketService.getPost(this.postId);
+        this.forumService.getPost(this.postId).subscribe((postResponse: Post) => {
+            this.post = postResponse;
+            this.postId = postResponse._id;
+            this.forumService.isLoading = false;
+        });
       }
     });
   }
@@ -66,7 +73,9 @@ export class ForumPostComponent implements OnInit {
 
       console.log(newComment);
 
-      this.socketService.saveComment(newComment);
+      this.forumService.saveComment(newComment).subscribe((response: SavePostCommentResponse) => {
+        this.snackbar.open(response.message, '', { duration: 2000 });
+      });
 
     }
 

@@ -3,22 +3,22 @@
     <div  [ngClass]="{'authFormLogin':currentActivePage==='login','authFormRegister':currentActivePage==='register'}" >
         <!--Header-->
         <div class="authFormHeader">
-            <button [ngClass]="{'authFormHeaderButtonLogin':currentActivePage==='login','authFormHeaderButtonRegister':currentActivePage==='register'}" (click)="handleClickLoginButton()">Login</button>
-            <button [ngClass]="{'authFormHeaderButtonLogin':currentActivePage==='login','authFormHeaderButtonRegister':currentActivePage==='register'}" (click)="handleClickRegisterButton()">Register</button>
+            <button [ngClass]="{'authFormHeaderButtonLogin':currentActivePage==='login','authFormHeaderButtonRegister':currentActivePage==='register'}" (click)="goToLogin()">Login</button>
+            <button [ngClass]="{'authFormHeaderButtonLogin':currentActivePage==='login','authFormHeaderButtonRegister':currentActivePage==='register'}" (click)="goToRegister()">Register</button>
         </div>
         <!--Image-->
         <div class="authFormImageContainer">
             <div class="lottieContainer">
                 <ng-container *ngIf="currentActivePage==='login'">
-                    <ng-lottie [options]="loginAnimationOptions" (animationCreated)="animationCreated($event)"></ng-lottie>
+                    <ng-lottie [options]="loginAnimationOptions"></ng-lottie>
                 </ng-container>
                 <ng-container *ngIf="currentActivePage==='register'">
-                    <ng-lottie [options]="registerAnimationOptions" (animationCreated)="animationCreated($event)"></ng-lottie>
+                    <ng-lottie [options]="registerAnimationOptions"></ng-lottie>
                 </ng-container>
             </div>
         </div>
         <!--Fields-->
-        <form #authForm="ngForm" (ngSubmit)="handleSubmitAuthForm(authForm)" class="authFormFields">
+        <form #authForm="ngForm" (ngSubmit)="submitAuth(authForm)" class="authFormFields">
 
             <h1 [ngClass]="{'authFormFieldLabelLogin':currentActivePage==='login','authFormFieldLabelRegister':currentActivePage==='register'}">Username</h1>
 

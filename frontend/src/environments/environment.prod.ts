@@ -1,4 +1,5 @@
 export const environment = {
   production: true,
-  serverUrl: 'http://localhost:9000'
+  serverUrl: 'http://localhost:9000',
+  socketServerUrl: 'http://localhost:3000'
 };

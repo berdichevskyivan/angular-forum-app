@@ -5,6 +5,7 @@ import {MatDialog} from '@angular/material/dialog';
 import {Router} from '@angular/router';
 import {AnimationOptions} from 'ngx-lottie';
 import {SocketService} from '../../services/socket.service';
+import {AuthResponse, Post} from '../../models/models';
 
 @Component({
   selector: 'app-forum',
@@ -21,32 +22,36 @@ export class ForumComponent implements OnInit {
     path: '/assets/post.json'
   };
 
-  constructor(public forumService: ForumService, public socketService: SocketService, public dialog: MatDialog, private router: Router) { }
+  constructor(public forumService: ForumService, public dialog: MatDialog, private router: Router) { }
 
   ngOnInit(): void {
 
-    this.socketService.validateSession(false);
-    this.socketService.getPosts();
+    this.forumService.getPosts();
 
   }
 
-  handleClickLogoutButton(): void {
+  logout(): void {
 
     this.forumService.isLoading = true;
 
-    this.socketService.logout();
+    this.forumService.logout().subscribe((authResponse: AuthResponse) => {
+      this.forumService.isLoading = false;
+      if (authResponse.type === 'success'){
+        this.router.navigateByUrl('/login');
+      }
+    });
 
   }
 
-  handleClickCreatePostButton(): void {
+  goToCreatePost(): void {
 
-    const dialogRef = this.dialog.open(PostCreationModalComponent, {
+    this.dialog.open(PostCreationModalComponent, {
       data: {title: '', author: this.forumService.userData.username, content: '', }
     });
 
   }
 
-  handleClickOnPostTitle(id: string): void {
+  goToPost(id: string): void {
    console.log(id);
    this.router.navigateByUrl(`/forum-post?id=${id}`);
    this.forumService.isLoading = true;

@@ -29,6 +29,7 @@ export class ForumService {
     }
 
     login( authData: AuthData ): Observable<AuthResponse> {
+        console.log(authData);
         return this.post('/api/login', authData);
     }
 

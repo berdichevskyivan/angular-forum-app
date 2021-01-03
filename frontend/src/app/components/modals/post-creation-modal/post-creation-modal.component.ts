@@ -30,7 +30,12 @@ export class PostCreationModalComponent implements OnInit {
 
     } else {
 
-      this.socketService.savePost(this.post, this.dialogRef);
+      this.forumService.savePost(this.post).subscribe((savePostResponse: SavePostResponse) => {
+        this.snackbar.open(savePostResponse.message, '', { duration: 2000 });
+        if (savePostResponse.type === 'success') {
+          this.dialogRef.close();
+        }
+      });
 
     }
 

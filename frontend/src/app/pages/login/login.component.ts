@@ -1,14 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { AnimationItem } from 'lottie-web';
 import { AnimationOptions } from 'ngx-lottie';
 import { NgForm } from '@angular/forms';
 import { AuthData, AuthResponse, SessionValidationResponse } from '../../models/models';
 import { ForumService } from '../../services/forum.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
-import {SocketService} from '../../services/socket.service';
-
-import { map } from 'rxjs/operators';
 
 
 @Component({
@@ -28,21 +24,26 @@ export class LoginComponent implements OnInit {
       path: '/assets/fire.json'
   };
 
-  constructor(private forumService: ForumService, private socketService: SocketService, private snackbar: MatSnackBar, private router: Router) { }
+  constructor(private forumService: ForumService, private snackbar: MatSnackBar, private router: Router) { }
 
   ngOnInit(): void {
-    this.socketService.validateSession(false);
+    this.forumService.validateSession().subscribe((data: SessionValidationResponse) => {
+      if (data.type === 'success'){
+        this.forumService.userData.username = data.username;
+        this.router.navigateByUrl('/forum');
+      }
+    });
   }
 
-  handleClickLoginButton(): void {
+  goToLogin(): void {
     this.currentActivePage = 'login';
   }
 
-  handleClickRegisterButton(): void {
+  goToRegister(): void {
     this.currentActivePage = 'register';
   }
 
-  handleSubmitAuthForm(f: NgForm): void {
+  submitAuth(f: NgForm): void {
 
     if (f.invalid){
 
@@ -53,20 +54,35 @@ export class LoginComponent implements OnInit {
       const authData: AuthData = f.value;
       console.log(authData);
 
+      this.forumService.isLoading = true;
+
       if (this.currentActivePage === 'login') {
 
-        this.socketService.login(authData);
+        this.forumService.login(authData).subscribe((authResponse: AuthResponse) => {
+          this.snackbar.open(authResponse.message, '', { duration: 2000 });
+          this.forumService.isLoading = false;
+          console.log(authResponse);
+          if (authResponse.type === 'success'){
+            this.forumService.userData.username = authResponse.username;
+            this.router.navigateByUrl('/forum');
+          }
+        });
 
       } else if (this.currentActivePage === 'register'){
 
-        this.socketService.register(authData);
+        this.forumService.register(authData).subscribe((authResponse: AuthResponse) => {
+          this.snackbar.open(authResponse.message, '', { duration: 2000 });
+          this.forumService.isLoading = false;
+          if (authResponse.type === 'success'){
+            this.forumService.userData.username = authResponse.username;
+            this.router.navigateByUrl('/forum');
+          }
+        });
 
       }
 
     }
 
   }
-
-  animationCreated(animationItem: AnimationItem): void { }
 
 }
